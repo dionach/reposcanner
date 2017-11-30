@@ -4,6 +4,7 @@ import argparse
 import binascii
 import datetime
 import math
+import os
 import re
 import signal
 import sys
@@ -233,9 +234,17 @@ args = parser.parse_args()
 
 # Check if repo exists locally, otherwise try and clone it
 try:
-    repo = Repo(args.repo)
-except NoSuchPathError:
     repo_name = args.repo.rsplit("/", 1)[1]
+except IndexError:
+    repo_name = args.repo
+if os.path.isdir(repo_name):
+    try:
+        repo = Repo(repo_name)
+        print("Using local copy of repo...")
+    except NoSuchPathError:
+        print(col.red + "Invalid repo " + repo_name + col.end)
+        sys.exit(1)
+else:
     try:
         print("Trying to clone repo %s from %s..." % (repo_name, args.repo))
         repo = Repo.clone_from(args.repo, repo_name)
