@@ -14,7 +14,7 @@ try:
     from git import *
     from git.exc import NoSuchPathError
 except ImportError:
-    print("\nPython git module missing (apt-get install python-git)\n")
+    print("\nPython git module missing (apt-get install python3-git)\n")
     sys.exit(1)
 
 ###########
