@@ -26,12 +26,14 @@ class col:
         blue = '\033[94m'
         red = '\033[31m'
         brown = '\033[33m'
+        grey = '\033[90m'
         end = '\033[0m'
     else:   # Colours mess up redirected output, disable them
         green = ""
         blue = ""
         red = ""
         brown = ""
+        grey = ""
         end = ""
 
 
@@ -87,7 +89,9 @@ def final_output(loot, error=False):
         print("%sDate : %s%s" % (col.blue, commit.date, col.end))
         print("%sAuthor : %s%s" % (col.blue, commit.author, col.end))
         for path in commit.paths:
-            print("%s%s%s" % (col.brown, path, col.end))
+            if "github.com" in args.repo.lower():
+                url = args.repo + "/blob/" + sha + "/" + col.brown + path
+                print("%s%s%s" % (col.grey, url, col.end))
             for key,full in commit.get_items(path):
                 output_string = full.replace(key, col.green + key + col.end)
                 print(output_string)
