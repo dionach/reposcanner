@@ -92,6 +92,8 @@ def final_output(loot, error=False):
             if "github.com" in args.repo.lower():
                 url = args.repo + "/blob/" + sha + "/" + col.brown + path
                 print("%s%s%s" % (col.grey, url, col.end))
+            else:
+                print("%s%s%s" % (col.brown, path, col.end))
             for key,full in commit.get_items(path):
                 output_string = full.replace(key, col.green + key + col.end)
                 print(output_string)
