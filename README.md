@@ -16,10 +16,9 @@ Options:
 optional arguments:
   -h, --help                     show this help message and exit
   -r REPO, --repo REPO           Repo to scan
-  -c COUNT, --count COUNT        Number of commits to scan (default 500)
+  -c COUNT, --count COUNT        Number of commits to scan (default all)
   -e ENTROPY, --entropy ENTROPY  Minimum entropy to report (default 4.3)
   -l LENGTH, --length LENGTH     Maxmimum line length (default 500)
-  -a, --all-branches             Scan all branches
   -b BRANCH, --branch BRANCH     Scan a specific branch
   -v, --verbose                  Verbose output
 ```

@@ -110,9 +110,10 @@ def scan_branch(repo, branch, count):
 
     prev_commit = None
     print("Scanning branch %s" % str(branch))
+    commit_count = sum(1 for i in repo.iter_commits(branch, max_count=args.count)) - 1
     for count,commit in enumerate(repo.iter_commits(branch, max_count=args.count)):
         if sys.stdout.isatty():
-            print("Parsing commit %s%s%s\r" % (col.green, count, col.end), end="", flush=True)
+            print("Parsing commit %s%s/%s%s\r" % (col.green, count, commit_count, col.end), end="", flush=True)
         if not prev_commit:
             prev_commit = commit
             continue
@@ -230,10 +231,9 @@ signal.signal(signal.SIGINT, signal_handler)
 # Parse arguments
 parser = argparse.ArgumentParser('reposcanner.py', formatter_class=lambda prog:argparse.HelpFormatter(prog,max_help_position=40))
 parser.add_argument('-r', '--repo', help='Repo to scan', dest='repo', required=True)
-parser.add_argument('-c', '--count', help='Number of commits to scan (default 500)', dest='count', default=500, type=int)
+parser.add_argument('-c', '--count', help='Number of commits to scan (default all)', dest='count', default=sys.maxsize, type=int)
 parser.add_argument('-e', '--entropy', help='Minimum entropy to report (default 4.3)', dest='entropy', default=4.3, type=float)
 parser.add_argument('-l', '--length', help='Maxmimum line length (default 500)', dest='length', default=500, type=int)
-parser.add_argument('-a', '--all-branches', help='Scan all branches', dest='all_branches', action='store_true', default=False)
 parser.add_argument('-b', '--branch', help='Branch to scan', dest='branch' )
 parser.add_argument('-v', '--verbose', help='Verbose output', dest='verbose', action='store_true', default=False)
 args = parser.parse_args()
@@ -265,18 +265,15 @@ branches = repo.refs
 args.count += 1
 
 # Get active branch if none specified
-if not args.branch:
-    branch = repo.active_branch
-else:
+if args.branch:
     branch = "origin/" + args.branch
-    try:
-        branch = repo.heads[branch]
-    except Exception as e:
-        print(e)
+    if branch in branches:
+        scan_branch(repo, branch, args.count)
+    else:
         print("%sInvalid branch specified%s\n" % (col.red, col.end))
         sys.exit(1)
 
-if args.all_branches:
+else:
     for branch in branches:
         # Skip tags, HEAD and any invalid branches
         if (
@@ -286,9 +283,6 @@ if args.all_branches:
            ):
             continue
         scan_branch(repo, branch, args.count)
-else:
-    scan_branch(repo, branch, args.count)
-
 
 # Output
 if sys.stdout.isatty():
