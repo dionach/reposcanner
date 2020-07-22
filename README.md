@@ -4,6 +4,14 @@ Reposcanner is a python script to search through the commit history of Git repos
 ## Installation
 The python Git module is required (python3-git on Debian).
 
+## Docker
+
+```
+docker build -t reposcanner .
+docker run -it --rm reposcanner -h
+docker run -it --rm reposcanner -r <repository>
+```
+
 ## Usage
 
 ```
